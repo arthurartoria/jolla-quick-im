@@ -1,0 +1,8 @@
+Package: quick-im
+Version: 0.0.1
+Architecture: all
+Maintainer: Arthur Artoria <arthurartoria@gmail.com>
+Installed-Size: 24 MB
+Section: user/other
+Priority: optional
+Description: Chinese Traditional Quick Input Method For Sailfish.
