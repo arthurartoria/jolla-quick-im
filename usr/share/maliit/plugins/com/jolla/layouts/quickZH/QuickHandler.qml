@@ -51,6 +51,12 @@ InputHandler {
 		            text: candidate
 		        }
 		    }
+		    
+		    Connections {
+            	target: candidateList
+            	onCandidatesUpdated: listView.positionViewAtBeginning()
+	    	}
+
 
 		}
     }
