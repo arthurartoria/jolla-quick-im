@@ -53,7 +53,7 @@ InputHandler {
             	target: candidateList
             	onCandidatesUpdated: listView.positionViewAtBeginning()
 	    	}
-
+			//**************** THE END **********
 
 		}
     }
