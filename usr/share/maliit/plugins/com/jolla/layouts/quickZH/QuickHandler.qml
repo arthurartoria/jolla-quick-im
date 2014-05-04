@@ -51,8 +51,8 @@ InputHandler {
 		            text: candidate
 		        }
 		    }
-		    
-		    Connections {
+		//**************** ADD THIS LINE ****************//    
+	    Connections {
             	target: candidateList
             	onCandidatesUpdated: listView.positionViewAtBeginning()
 	    	}
