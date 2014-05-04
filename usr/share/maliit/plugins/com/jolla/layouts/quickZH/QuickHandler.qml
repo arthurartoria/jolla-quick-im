@@ -50,12 +50,12 @@ InputHandler {
 		    }
 		/*================ ADD THESE LINES BELOW ================*/    
 			Connections {
-	            	target: candidateList
-	            	onCandidatesUpdated: listView.positionViewAtBeginning()
+            			target: candidateList
+	            		onCandidatesUpdated: listView.positionViewAtBeginning()
 			}
-
-		}
 		/*================ THE END ================*/   
+		}
+		
     }
     
     function handleKeyClick() {
