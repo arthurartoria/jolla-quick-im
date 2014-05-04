@@ -28,7 +28,7 @@ InputHandler {
                 function(tx) {
 
                     quick = '"'+ quick +'%"';
-                    var sql = 'SELECT character FROM quickTable WHERE quick LIKE '+ quick + ' ORDER BY frequency DESC LIMIT 0, 512';
+                    var sql = 'SELECT character FROM quickTable WHERE quick LIKE '+ quick + ' ORDER BY frequency DESC LIMIT 0, 256';
                     var rs = tx.executeSql(sql);
                     candidateList.clear();
                     for ( var i = 0; i < rs.rows.length; i++ ) {
@@ -48,7 +48,7 @@ InputHandler {
             db.transaction(
                 function(tx) {
                     character = '"' + character + '"';
-                    var sql = 'SELECT phrase FROM assoWord WHERE character='+ character + ' LIMIT 0, 64';
+                    var sql = 'SELECT phrase FROM assoWord WHERE character='+ character + ' ORDER BY frequency DESC LIMIT 0, 128';
                     var rs = tx.executeSql(sql);
                     candidateList.clear();
                     for ( var i = 0; i < rs.rows.length; i++ ) {
