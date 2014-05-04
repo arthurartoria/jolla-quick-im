@@ -48,7 +48,7 @@ InputHandler {
 		            text: candidate
 		        }
 		    }
-		/*================ ADD THESE LINES ================/    
+		/*================ ADD THESE LINES BELOW ================*/    
 		Connections {
             	target: candidateList
             	onCandidatesUpdated: listView.positionViewAtBeginning()
@@ -56,7 +56,7 @@ InputHandler {
 			//**************** THE END **********
 
 		}
-		/*================ THE END ================/   
+		/*================ THE END ================*/   
     }
     
     function handleKeyClick() {
