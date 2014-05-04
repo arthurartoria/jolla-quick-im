@@ -26,11 +26,8 @@ InputHandler {
 		SilicaListView {
 		    id: listView
 		    orientation: ListView.Horizontal
-		    width: parent.width // - moreButton.width
-		    // I have no idea why height: 70 makes the top row smaller
-		    // than for Xt9CpInputHandler and Xt9InputHandler even though
-		    // they both specify 70 as well
-		    height: 80 // 70
+		    width: parent.width
+		    height: 80
 		    
 		    model: candidateList
 		    
