@@ -59,6 +59,30 @@ InputHandler {
                 }
             )
         }
+		
+		function pushQK(character) {
+			var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+
+			db.transaction(
+				function(cm) {
+					character = '"' + character + '"';
+					var sql = 'UPDATE quickTable SET frequency=frequency+1 WHERE character='+ character;
+					var rs = cm.executeSql(sql);
+				}
+			)
+		}
+
+		function pushAW(phrase) {
+			var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+
+			db.transaction(
+				function(cm) {
+					phrase = '"' + phrase + '"';
+					var sql = 'UPDATE assoWord SET frequency=frequency+1 WHERE phrase='+ phrase;
+					var rs = cm.executeSql(sql);
+				}
+			)
+		}
     }
 
     topItem: Row {
@@ -74,8 +98,16 @@ InputHandler {
             delegate: BackgroundItem {
                 id: backGround
                 onClicked: {
-                    commit(model.candidate)
-                    candidateList.loadAW(model.candidate)
+				
+					if ( preedit !== "" ) {
+						commit(model.candidate)
+						candidateList.pushQK(model.candidate)
+						candidateList.loadAW(model.candidate)
+					} else {
+						commit(model.candidate)
+						candidateList.pushAW(model.candidate)
+						candidateList.loadAW(model.candidate)
+					}
                 }
                 width: candidateText.width + Theme.paddingLarge * 2
                 height: parent ? parent.height : 0
