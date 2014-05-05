@@ -6,7 +6,7 @@ import "../.."
 import QtQuick.LocalStorage 2.0
 
 InputHandler {
-
+	id: inputHandler
     property string preedit
     property var trie
     property bool trie_built: false
@@ -90,9 +90,9 @@ InputHandler {
         SilicaListView {
             id: listView
             orientation: ListView.Horizontal
-            width: parent.width
+            width: parent.width - 64
             height: 80
-
+			
             model: candidateList
 
             delegate: BackgroundItem {
@@ -125,8 +125,57 @@ InputHandler {
                 onCandidatesUpdated: listView.positionViewAtBeginning()
             }
         }
-
+		
+		Button {
+			height: parent.height
+			width: 64
+			text: "選"
+			onClicked: {
+				if ( gridView.visible !== true ) {
+					gridView.visible = true;
+				} else {
+					gridView.visible = false;
+				}
+			}			
+		}
+		
     }
+	
+	SilicaGridView {
+		id: gridView
+		width: parent.width
+		anchors.top: parent.top
+		anchors.topMargin: 80
+		anchors.bottom: parent.bottom
+		model: candidateList
+		visible: false
+		z: 128
+		delegate: BackgroundItem {
+			width: candidateText.width + Theme.paddingLarge * 2
+			height: parent ? parent.height : 0
+			
+			onClicked: {
+			
+				if ( preedit !== "" ) {
+					commit(model.candidate)
+					candidateList.pushQK(model.candidate)
+					candidateList.loadAW(model.candidate)
+				} else {
+					commit(model.candidate)
+					candidateList.pushAW(model.candidate)
+					candidateList.loadAW(model.candidate)
+				}
+			}					
+
+			Text {
+				id: candidateText
+				anchors.centerIn: parent
+				color: (backGround.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
+				font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
+				text: candidate
+			}
+		}
+	}
 
     function handleKeyClick() {
         var handled = false
