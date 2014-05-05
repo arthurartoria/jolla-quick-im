@@ -92,6 +92,7 @@ InputHandler {
             orientation: ListView.Horizontal
             width: parent.width - 64
             height: 80
+			clip: true
 			
             model: candidateList
 
@@ -131,12 +132,53 @@ InputHandler {
 			width: 64
 			text: "選"
 			onClicked: {
-
+				if ( gridView.visible == false ) {
+					gridView.visible = true;
+				} else {
+					gridView.visible = false;
+				}
 			}			
 		}
 		
     }
 	
+	SilicaGridView {
+		anchors.top: parent.top
+		anchors.topMargin: 80
+		anchors.bottom: parent.bottom
+		model: candidateList
+		visible: false
+		z: 128
+		delegate: BackgroundItem {
+			id: gridBack
+			width: gridText.width + Theme.paddingLarge * 2
+			height: parent ? parent.height : 0
+			
+			onClicked: {
+			
+		id: gridView
+		width: parent.width
+				if ( preedit !== "" ) {
+					commit(model.candidate)
+					candidateList.pushQK(model.candidate)
+					candidateList.loadAW(model.candidate)
+				} else {
+					commit(model.candidate)
+					candidateList.pushAW(model.candidate)
+					candidateList.loadAW(model.candidate)
+				}
+			}					
+
+			Text {
+				id: gridText
+				anchors.centerIn: parent
+				color: (gridBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
+				font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
+				text: candidate
+			}
+		}
+	}
+
     function handleKeyClick() {
         var handled = false
         keyboard.expandedPaste = false
