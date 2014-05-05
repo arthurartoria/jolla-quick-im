@@ -66,7 +66,7 @@ InputHandler {
 			db.transaction(
 				function(cm) {
 					character = '"' + character + '"';
-					var sql = 'UPDATE quickTable SET frequency=frequency+1 WHERE character='+ character;
+					var sql = 'UPDATE quickTable SET frequency=frequency+10 WHERE character='+ character;
 					var rs = cm.executeSql(sql);
 				}
 			)
@@ -78,7 +78,7 @@ InputHandler {
 			db.transaction(
 				function(cm) {
 					phrase = '"' + phrase + '"';
-					var sql = 'UPDATE assoWord SET frequency=frequency+1 WHERE phrase='+ phrase;
+					var sql = 'UPDATE assoWord SET frequency=frequency+10 WHERE phrase='+ phrase;
 					var rs = cm.executeSql(sql);
 				}
 			)
