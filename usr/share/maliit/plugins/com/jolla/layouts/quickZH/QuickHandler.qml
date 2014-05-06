@@ -144,6 +144,7 @@ InputHandler {
 	
 	SilicaGridView {
 		id: gridView
+		width: parent.width
 		anchors.top: parent.top
 		anchors.topMargin: 80
 		anchors.bottom: parent.bottom
