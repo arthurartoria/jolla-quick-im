@@ -151,14 +151,9 @@ InputHandler {
 		visible: false
 		z: 256
 		
-		Rectangle {
-			anchors.fill: parent
-			z: 128
-			color: "#000000"
-		}
-		
-		delegate: BackgroundItem {
+		delegate: Rectangle {
 			id: gridBack
+			color: "#000000"
 			width: gridText.width + Theme.paddingLarge * 2
 			height: 80
 			z: 320
