@@ -141,8 +141,7 @@ InputHandler {
 			text: "…"
 			z: 512
 			onClicked: {
-				if (!contextMenu)
-                    contextMenu = contextMenuComponent.createObject(listView)
+				contextMenu = contextMenuComponent.createObject(listView)
                 contextMenu.show(row)
 			}			
 		}
