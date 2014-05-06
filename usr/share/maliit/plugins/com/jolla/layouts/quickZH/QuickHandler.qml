@@ -84,16 +84,17 @@ InputHandler {
 			)
 		}
     }
+	
+	Rectangle {
+		anchors.fill: parent
+		z: 128
+		color: "#000000"
+	}
 
     topItem: Row {
+		id: row
 	
-		Rectangle {
-			anchors.fill: parent
-			z: 128
-			color: "#000000"
-		}
-
-        SilicaListView {
+		SilicaListView {
             id: listView
             orientation: ListView.Horizontal
             width: parent.width - 64
@@ -140,55 +141,27 @@ InputHandler {
 			text: "…"
 			z: 512
 			onClicked: {
-				if ( gridView.visible == false ) {
-					gridView.visible = true;
-				} else {
-					gridView.visible = false;
-				}
+				if (!contextMenu)
+                    contextMenu = contextMenuComponent.createObject(listView)
+                contextMenu.show(row)
 			}			
 		}
-		
-		SilicaGridView {
-			id: gridView
-			width: parent.width
-			height: 400
-			model: candidateList
-			visible: false
-			z: 256
-			clip: true
-					
-			delegate: BackgroundItem {
-				id: gridBack
-				width: gridText.width + Theme.paddingLarge * 2
-				height: 80
-				z: 320
-				
-				onClicked: {
-				
-					if ( preedit !== "" ) {
-						commit(model.candidate)
-						candidateList.pushQK(model.candidate)
-						candidateList.loadAW(model.candidate)
-						gridView.visible = false
-					} else {
-						commit(model.candidate)
-						candidateList.pushAW(model.candidate)
-						candidateList.loadAW(model.candidate)
-						gridView.visible = false
-					}
-				}					
-
-				Text {
-					id: gridText
-					anchors.centerIn: parent
-					color: (gridBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
-					font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
-					text: candidate
-					z: 480
-				}
-			}
-		}
     }
+	
+	Component {
+        id: contextMenuComponent
+        ContextMenu {
+            MenuItem {
+                text: "Option 1"
+                onClicked: console.log("Clicked Option 1")
+            }
+            MenuItem {
+                text: "Option 2"
+                onClicked: console.log("Clicked Option 2")
+            }
+        }
+    }
+
 	
 	
 	
