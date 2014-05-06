@@ -141,25 +141,23 @@ InputHandler {
 			text: "…"
 			z: 512
 			onClicked: {
-				contextMenu = contextMenuComponent.createObject(listView)
                 contextMenu.show(row)
 			}			
 		}
     }
-	
-	Component {
-        id: contextMenuComponent
-        ContextMenu {
-            MenuItem {
-                text: "Option 1"
-                onClicked: console.log("Clicked Option 1")
-            }
-            MenuItem {
-                text: "Option 2"
-                onClicked: console.log("Clicked Option 2")
-            }
-        }
-    }
+
+	ContextMenu {
+		id: contextMenu
+		MenuItem {
+			text: "Option 1"
+			onClicked: console.log("Clicked Option 1")
+		}
+		MenuItem {
+			text: "Option 2"
+			onClicked: console.log("Clicked Option 2")
+		}
+	}
+  
 
 	
 	
