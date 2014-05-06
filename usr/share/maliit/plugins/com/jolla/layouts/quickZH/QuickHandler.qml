@@ -145,9 +145,7 @@ InputHandler {
 	SilicaGridView {
 		id: gridView
 		width: parent.width
-		anchors.top: parent.top
-		anchors.topMargin: 80
-		anchors.bottom: parent.bottom
+		height: 320
 		model: candidateList
 		visible: false
 		z: 256
@@ -155,7 +153,7 @@ InputHandler {
 		delegate: BackgroundItem {
 			id: gridBack
 			width: gridText.width + Theme.paddingLarge * 2
-			height: parent ? parent.height : 0
+			height: 80
 			
 			onClicked: {
 			
