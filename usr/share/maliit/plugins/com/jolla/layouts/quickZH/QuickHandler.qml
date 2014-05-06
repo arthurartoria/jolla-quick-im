@@ -141,16 +141,52 @@ InputHandler {
 			text: "…"
 			z: 512
 			onClicked: {
-                contextMenu.show(listView)
+                contextMenu.show(row)
 			}			
 		}
     }
 
 	ContextMenu {
 		id: contextMenu
-		Text {
-			text: "FUCK YOU MAVICA !"
-			font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
+		SilicaGridView {
+			id: gridView
+			width: parent.width
+			height: 400
+			model: candidateList
+			visible: false
+			z: 256
+			clip: true
+					
+			delegate: BackgroundItem {
+				id: gridBack
+				width: gridText.width + Theme.paddingLarge * 2
+				height: 80
+				z: 320
+				
+				onClicked: {
+				
+					if ( preedit !== "" ) {
+						commit(model.candidate)
+						candidateList.pushQK(model.candidate)
+						candidateList.loadAW(model.candidate)
+						gridView.visible = false
+					} else {
+						commit(model.candidate)
+						candidateList.pushAW(model.candidate)
+						candidateList.loadAW(model.candidate)
+						gridView.visible = false
+					}
+				}					
+
+				Text {
+					id: gridText
+					anchors.centerIn: parent
+					color: (gridBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
+					font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
+					text: candidate
+					z: 480
+				}
+			}
 		}
 	}
   
