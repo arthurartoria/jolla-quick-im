@@ -6,14 +6,14 @@ import "../.."
 import QtQuick.LocalStorage 2.0
 
 InputHandler {
-
+	id: inputHandler
     property string preedit
     property var trie
     property bool trie_built: false
 
     ListModel {
         id: candidateList
-
+ 
         ListElement {
             candidate: ""
         }
@@ -22,43 +22,43 @@ InputHandler {
 
         function loadQK(quick) {
 
-            var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+			var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
 
-            db.transaction(
-                function(tx) {
+			db.transaction(
+				function(tx) {
 
-                    quick = '"'+ quick +'%"';
-                    var sql = 'SELECT character FROM quickTable WHERE quick LIKE '+ quick + ' ORDER BY frequency DESC LIMIT 0, 256';
-                    var rs = tx.executeSql(sql);
-                    candidateList.clear();
-                    for ( var i = 0; i < rs.rows.length; i++ ) {
-                        candidateList.append( { "candidate": rs.rows.item(i).character } );
-                    }
+					quick = '"'+ quick +'%"';
+					var sql = 'SELECT character FROM quickTable WHERE quick LIKE '+ quick + ' ORDER BY frequency DESC LIMIT 0, 256';
+					var rs = tx.executeSql(sql);
+					candidateList.clear();
+					for ( var i = 0; i < rs.rows.length; i++ ) {
+						candidateList.append( { "candidate": rs.rows.item(i).character } );
+				}
 
-                candidatesUpdated()
+				candidatesUpdated()
 
-                }
-            )
-        }
+				}
+			)
+		}
 
-        function loadAW(character) {
+		function loadAW(character) {
 
-            var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+			var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
 
-            db.transaction(
-                function(tx) {
-                    character = '"' + character + '"';
-                    var sql = 'SELECT phrase FROM assoWord WHERE character='+ character + ' ORDER BY frequency DESC LIMIT 0, 128';
-                    var rs = tx.executeSql(sql);
-                    candidateList.clear();
-                    for ( var i = 0; i < rs.rows.length; i++ ) {
-                        candidateList.append( { "candidate": rs.rows.item(i).phrase } );
-                    }
+			db.transaction(
+				function(tx) {
+					character = '"' + character + '"';
+					var sql = 'SELECT phrase FROM assoWord WHERE character='+ character + ' ORDER BY frequency DESC LIMIT 0, 128';
+					var rs = tx.executeSql(sql);
+					candidateList.clear();
+					for ( var i = 0; i < rs.rows.length; i++ ) {
+						candidateList.append( { "candidate": rs.rows.item(i).phrase } );
+					}
 
-                    candidatesUpdated()
-                }
-            )
-        }
+					candidatesUpdated()
+				}
+			)
+		}
 		
 		function pushQK(character) {
 			var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
@@ -90,13 +90,14 @@ InputHandler {
         SilicaListView {
             id: listView
             orientation: ListView.Horizontal
-            width: parent.width
+            width: parent.width - 64
             height: 80
-
+			clip: true
+			
             model: candidateList
 
             delegate: BackgroundItem {
-                id: backGround
+                id: listBack
                 onClicked: {
 				
 					if ( preedit !== "" ) {
@@ -109,13 +110,13 @@ InputHandler {
 						candidateList.loadAW(model.candidate)
 					}
                 }
-                width: candidateText.width + Theme.paddingLarge * 2
+                width: listText.width + Theme.paddingLarge * 2
                 height: parent ? parent.height : 0
 
                 Text {
-                    id: candidateText
+                    id: listText
                     anchors.centerIn: parent
-                    color: (backGround.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
+                    color: (listBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
                     font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
                     text: candidate
                 }
@@ -125,8 +126,60 @@ InputHandler {
                 onCandidatesUpdated: listView.positionViewAtBeginning()
             }
         }
-
+		
+		Button {
+			height: 80
+			width: 64
+			text: "…"
+			onClicked: {
+				if ( gridView.visible == false ) {
+					gridView.visible = true;
+				} else {
+					gridView.visible = false;
+				}
+			}			
+		}
+		
     }
+	
+	SilicaGridView {
+		id: gridView
+		anchors.top: parent.top
+		anchors.topMargin: 80
+		anchors.bottom: parent.bottom
+		model: candidateList
+		visible: false
+		z: 256
+		
+		delegate: BackgroundItem {
+			id: gridBack
+			width: gridText.width + Theme.paddingLarge * 2
+			height: parent ? parent.height : 0
+			
+			onClicked: {
+			
+		id: gridView
+		width: parent.width
+				if ( preedit !== "" ) {
+					commit(model.candidate)
+					candidateList.pushQK(model.candidate)
+					candidateList.loadAW(model.candidate)
+				} else {
+					commit(model.candidate)
+					candidateList.pushAW(model.candidate)
+					candidateList.loadAW(model.candidate)
+				}
+			}					
+
+			Text {
+				id: gridText
+				anchors.centerIn: parent
+				color: (gridBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
+				font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
+				text: candidate
+			}
+		}
+	}
 
     function handleKeyClick() {
         var handled = false
