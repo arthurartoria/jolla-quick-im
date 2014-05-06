@@ -131,6 +131,7 @@ InputHandler {
 			height: 80
 			width: 64
 			text: "…"
+			z: 512
 			onClicked: {
 				if ( gridView.visible == false ) {
 					gridView.visible = true;
@@ -145,15 +146,22 @@ InputHandler {
 	SilicaGridView {
 		id: gridView
 		width: parent.width
-		height: 320
+		height: 400
 		model: candidateList
 		visible: false
 		z: 256
+		
+		Rectangle {
+			anchors.fill: parent
+			z: 128
+			color: "#000000"
+		}
 		
 		delegate: BackgroundItem {
 			id: gridBack
 			width: gridText.width + Theme.paddingLarge * 2
 			height: 80
+			z: 320
 			
 			onClicked: {
 			
@@ -161,10 +169,12 @@ InputHandler {
 					commit(model.candidate)
 					candidateList.pushQK(model.candidate)
 					candidateList.loadAW(model.candidate)
+					gridView.visible = false
 				} else {
 					commit(model.candidate)
 					candidateList.pushAW(model.candidate)
 					candidateList.loadAW(model.candidate)
+					gridView.visible = false
 				}
 			}					
 
