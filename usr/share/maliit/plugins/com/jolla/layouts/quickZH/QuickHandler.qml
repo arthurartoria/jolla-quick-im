@@ -158,8 +158,6 @@ InputHandler {
 			
 			onClicked: {
 			
-		id: gridView
-		width: parent.width
 				if ( preedit !== "" ) {
 					commit(model.candidate)
 					candidateList.pushQK(model.candidate)
