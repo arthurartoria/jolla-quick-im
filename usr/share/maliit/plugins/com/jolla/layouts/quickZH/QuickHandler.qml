@@ -141,7 +141,7 @@ InputHandler {
 			text: "…"
 			z: 512
 			onClicked: {
-                contextMenu.show(row)
+                contextMenu.show(listView)
 			}			
 		}
     }
@@ -151,9 +151,8 @@ InputHandler {
 		SilicaGridView {
 			id: gridView
 			width: parent.width
-			height: 400
+			height: 320
 			model: candidateList
-			visible: false
 			z: 256
 			clip: true
 					
