@@ -85,14 +85,7 @@ InputHandler {
 		}
     }
 	
-	Rectangle {
-		anchors.fill: parent
-		z: 128
-		color: "#000000"
-	}
-
-    topItem: Row {
-		id: row
+	topItem: Row {
 	
 		SilicaListView {
             id: listView
@@ -141,18 +134,20 @@ InputHandler {
 			text: "…"
 			z: 512
 			onClicked: {
-                contextMenu.show(listView)
+				if ( gridView.visible == false ) {
+					gridView.visible = true;
+				} else {
+					gridView.visible = false;
+				}
 			}			
 		}
-    }
-
-	ContextMenu {
-		id: contextMenu
+		
 		SilicaGridView {
 			id: gridView
 			width: parent.width
-			height: 320
+			height: 400
 			model: candidateList
+			visible: false
 			z: 256
 			clip: true
 					
@@ -187,9 +182,7 @@ InputHandler {
 				}
 			}
 		}
-	}
-  
-
+    }
 	
 	
 	
