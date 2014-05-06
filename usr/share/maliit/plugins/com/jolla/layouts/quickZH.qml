@@ -42,7 +42,7 @@ KeyboardLayout {
     
     KeyboardRow {
         z: 0
-        CharacterKey { caption: "手"; captionShifted: "Q"; symView: "1"; symView2: "€" }
+        CharacterKey { z: 2; caption: "手"; captionShifted: "Q"; symView: "1"; symView2: "€" }
         CharacterKey { caption: "田"; captionShifted: "W"; symView: "2"; symView2: "£" }
         CharacterKey { caption: "水"; captionShifted: "E"; symView: "3"; symView2: "$"; accents: "eèéêë€"; accentsShifted: "EÈÉÊË€" }
         CharacterKey { caption: "口"; captionShifted: "R"; symView: "4"; symView2: "¥" }
