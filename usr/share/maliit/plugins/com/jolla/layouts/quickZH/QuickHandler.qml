@@ -130,7 +130,7 @@ InputHandler {
 		Button {
 			height: 80
 			width: 64
-			text: "選"
+			text: "…"
 			onClicked: {
 				if ( gridView.visible == false ) {
 					gridView.visible = true;
@@ -143,12 +143,14 @@ InputHandler {
     }
 	
 	SilicaGridView {
+		id: gridView
 		anchors.top: parent.top
 		anchors.topMargin: 80
 		anchors.bottom: parent.bottom
 		model: candidateList
 		visible: false
-		z: 128
+		z: 256
+		
 		delegate: BackgroundItem {
 			id: gridBack
 			width: gridText.width + Theme.paddingLarge * 2
