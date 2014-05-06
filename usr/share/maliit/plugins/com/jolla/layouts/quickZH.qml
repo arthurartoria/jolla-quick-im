@@ -8,6 +8,7 @@ KeyboardLayout {
     
     QuickHandler {
         id: quickHandler
+        z: 512
     }
     
     Component.onCompleted: init()
