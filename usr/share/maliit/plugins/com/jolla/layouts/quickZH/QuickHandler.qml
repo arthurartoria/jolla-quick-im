@@ -93,6 +93,7 @@ InputHandler {
             width: parent.width - 64
             height: 80
 			clip: true
+			z: 256
 			
             model: candidateList
 
@@ -143,6 +144,12 @@ InputHandler {
 		
     }
 	
+	Rectangle {
+		anchors.fill: parent
+		z: 128
+		color: "#000000"
+	}
+	
 	SilicaGridView {
 		id: gridView
 		width: parent.width
@@ -150,13 +157,8 @@ InputHandler {
 		model: candidateList
 		visible: false
 		z: 256
-		
-		Rectangle {
-			anchors.fill: parent
-			z: 128
-			color: "#000000"
-		}
-		
+		clip: true
+				
 		delegate: BackgroundItem {
 			id: gridBack
 			width: gridText.width + Theme.paddingLarge * 2
