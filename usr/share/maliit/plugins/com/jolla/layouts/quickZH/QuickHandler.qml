@@ -151,27 +151,32 @@ InputHandler {
 		visible: false
 		z: 256
 		
+		
+		
 		delegate: Rectangle {
 			id: gridBack
-			color: "#000000"
 			width: gridText.width + Theme.paddingLarge * 2
 			height: 80
 			z: 320
+			color: "#000000"
 			
-			onClicked: {
-			
-				if ( preedit !== "" ) {
-					commit(model.candidate)
-					candidateList.pushQK(model.candidate)
-					candidateList.loadAW(model.candidate)
-					gridView.visible = false
-				} else {
-					commit(model.candidate)
-					candidateList.pushAW(model.candidate)
-					candidateList.loadAW(model.candidate)
-					gridView.visible = false
-				}
-			}					
+			MouseArea {
+				anchors.fill: parent
+				onClicked: {
+				
+					if ( preedit !== "" ) {
+						commit(model.candidate)
+						candidateList.pushQK(model.candidate)
+						candidateList.loadAW(model.candidate)
+						gridView.visible = false
+					} else {
+						commit(model.candidate)
+						candidateList.pushAW(model.candidate)
+						candidateList.loadAW(model.candidate)
+						gridView.visible = false
+					}
+				}	
+			}			
 
 			Text {
 				id: gridText
