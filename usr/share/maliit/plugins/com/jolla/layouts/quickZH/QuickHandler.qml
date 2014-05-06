@@ -184,6 +184,7 @@ InputHandler {
 				color: (gridBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
 				font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
 				text: candidate
+				z: 480
 			}
 		}
 	}
