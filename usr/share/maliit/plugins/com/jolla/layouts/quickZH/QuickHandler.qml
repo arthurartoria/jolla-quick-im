@@ -148,13 +148,9 @@ InputHandler {
 
 	ContextMenu {
 		id: contextMenu
-		MenuItem {
-			text: "Option 1"
-			onClicked: console.log("Clicked Option 1")
-		}
-		MenuItem {
-			text: "Option 2"
-			onClicked: console.log("Clicked Option 2")
+		Text {
+			text: "FUCK YOU MAVICA !"
+			font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
 		}
 	}
   
