@@ -40,6 +40,8 @@ KeyboardLayout {
     }
     
     KeyboardRow {
+		opacity: quickHandler.keyboardOpacity
+	
         CharacterKey { z: 2; caption: "手"; captionShifted: "Q"; symView: "1"; symView2: "€" }
         CharacterKey { caption: "田"; captionShifted: "W"; symView: "2"; symView2: "£" }
         CharacterKey { caption: "水"; captionShifted: "E"; symView: "3"; symView2: "$"; accents: "eèéêë€"; accentsShifted: "EÈÉÊË€" }
@@ -53,6 +55,8 @@ KeyboardLayout {
     }
 
     KeyboardRow {
+		opacity: quickHandler.keyboardOpacity
+		
         CharacterKey { caption: "日"; captionShifted: "A"; symView: "*"; symView2: "`"; accents: "aäàâáãå"; accentsShifted: "AÄÀÂÁÃÅ"}
         CharacterKey { caption: "尸"; captionShifted: "S"; symView: "#"; symView2: "^"; accents: "sß$"; accentsShifted: "S$" }
         CharacterKey { caption: "木"; captionShifted: "D"; symView: "+"; symView2: "|"; accents: "dð"; accentsShifted: "DÐ" }
@@ -65,6 +69,8 @@ KeyboardLayout {
     }
 
     KeyboardRow {
+		opacity: quickHandler.keyboardOpacity
+		
         ShiftKey { }
         
         CharacterKey { caption: "難"; captionShifted: "Z"; symView: "@"; symView2: "«" }
