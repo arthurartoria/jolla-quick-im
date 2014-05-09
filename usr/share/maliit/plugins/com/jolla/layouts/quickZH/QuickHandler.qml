@@ -10,6 +10,7 @@ InputHandler {
     property string preedit
     property var trie
     property bool trie_built: false
+	property int keyboardOpacity: 1
 
     ListModel {
         id: candidateList
@@ -129,54 +130,56 @@ InputHandler {
         }
 		
 		Button {
+			id: button
 			height: 80
 			width: 64
 			text: "…"
 			z: 512
+			
 			onClicked: {
-				if ( gridView.visible == false ) {
-					gridView.visible = true;
-				} else {
+				if ( inputHandler.keyboardOpacity == 0 ) {
 					gridView.visible = false;
+					gridView.opacity = 0;
+					inputHandler.keyboardOpacity = 1;
+					
+				} else {
+					inputHandler.keyboardOpacity = 0;
+					gridView.visible = true;					
+					gridView.opacity = 1;
 				}
 			}			
 		}
-		
     }
-	
+
 	SilicaGridView {
 		id: gridView
 		width: parent.width
 		height: 400
+		anchors.top: listView.bottom
 		model: candidateList
-		visible: false
-		z: 256
+		opacity: 0
+		visible: 0
+		z: 1024
 		clip: true
-				
-		delegate: Rectangle {
-			id: gridBack
-			width: gridText.width + Theme.paddingLarge * 2
-			height: 80
-			color: "#000000"
-			z: 420
+	
 			
-			MouseArea {
-				anchors.fill: parent
-				onClicked: {
-				
-					if ( preedit !== "" ) {
-						commit(model.candidate)
-						candidateList.pushQK(model.candidate)
-						candidateList.loadAW(model.candidate)
-						gridView.visible = false
-					} else {
-						commit(model.candidate)
-						candidateList.pushAW(model.candidate)
-						candidateList.loadAW(model.candidate)
-						gridView.visible = false
-					}
-				}	
-			}
+		delegate: BackgroundItem {
+			id: gridBack
+		
+			onClicked: {
+		
+				if ( preedit !== "" ) {
+					commit(model.candidate)
+					candidateList.pushQK(model.candidate)
+					candidateList.loadAW(model.candidate)
+					gridView.visible = false
+				} else {
+					commit(model.candidate)
+					candidateList.pushAW(model.candidate)
+					candidateList.loadAW(model.candidate)
+					gridView.visible = false
+				}
+			}	
 
 			Text {
 				id: gridText
@@ -184,10 +187,12 @@ InputHandler {
 				color: (gridBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
 				font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
 				text: candidate
-				z: 480
+				z: 2048
 			}
 		}
 	}
+	
+	
 
     function handleKeyClick() {
         var handled = false
