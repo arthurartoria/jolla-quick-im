@@ -6,15 +6,15 @@ import "../.."
 import QtQuick.LocalStorage 2.0
 
 InputHandler {
-	id: inputHandler
+    id: inputHandler
     property string preedit
     property var trie
     property bool trie_built: false
-	property bool keyboardVisible: true
+    property bool keyboardVisible: true
 
     ListModel {
         id: candidateList
- 
+
         ListElement {
             candidate: ""
         }
@@ -23,175 +23,216 @@ InputHandler {
 
         function loadQK(quick) {
 
-			var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+            var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
 
-			db.transaction(
-				function(tx) {
+            if ( quick.length > 1 ) {
 
-					quick = '"'+ quick +'%"';
-					var sql = 'SELECT character FROM quickTable WHERE quick LIKE '+ quick + ' ORDER BY frequency DESC LIMIT 0, 256';
-					var rs = tx.executeSql(sql);
-					candidateList.clear();
-					for ( var i = 0; i < rs.rows.length; i++ ) {
-						candidateList.append( { "candidate": rs.rows.item(i).character } );
-				}
+                db.transaction(
+                    function(tx) {
 
-				candidatesUpdated()
+                        quick = '"'+ quick +'%"';
+                        var sql = 'SELECT character FROM quickTable WHERE quick LIKE '+ quick + ' ORDER BY frequency DESC LIMIT 0, 256';
+                        var rs = tx.executeSql(sql);
+                        candidateList.clear();
+                        for ( var i = 0; i < rs.rows.length; i++ ) {
+                            candidateList.append( { "candidate": rs.rows.item(i).character } );
+                    }
 
-				}
-			)
-		}
+                    candidatesUpdated()
 
-		function loadAW(character) {
+                    }
 
-			var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+                )
 
-			db.transaction(
-				function(tx) {
-					character = '"' + character + '"';
-					var sql = 'SELECT phrase FROM assoWord WHERE character='+ character + ' ORDER BY frequency DESC LIMIT 0, 128';
-					var rs = tx.executeSql(sql);
-					candidateList.clear();
-					for ( var i = 0; i < rs.rows.length; i++ ) {
-						candidateList.append( { "candidate": rs.rows.item(i).phrase } );
-					}
+            } else {
 
-					candidatesUpdated()
-				}
-			)
-		}
-		
-		function pushQK(character) {
-			var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+                db.transaction(
+                    function(tx) {
 
-			db.transaction(
-				function(cm) {
-					character = '"' + character + '"';
-					var sql = 'UPDATE quickTable SET frequency=frequency+20 WHERE character='+ character;
-					var rs = cm.executeSql(sql);
-				}
-			)
-		}
+                        quick = '"'+ quick +'"';
+                        var sql = 'SELECT character FROM quickTable WHERE quick = '+ quick;
+                        var rs = tx.executeSql(sql);
+                        candidateList.clear();
+                        for ( var i = 0; i < rs.rows.length; i++ ) {
+                            candidateList.append( { "candidate": rs.rows.item(i).character } );
+                    }
 
-		function pushAW(phrase) {
-			var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+                    candidatesUpdated()
 
-			db.transaction(
-				function(cm) {
-					phrase = '"' + phrase + '"';
-					var sql = 'UPDATE assoWord SET frequency=frequency+20 WHERE phrase='+ phrase;
-					var rs = cm.executeSql(sql);
-				}
-			)
-		}
-    }
+                    }
 
-    topItem: Row {
-
-        SilicaListView {
-            id: listView
-            orientation: ListView.Horizontal
-            width: parent.width - 64
-            height: 80
-			clip: true
-			z: 256
-			
-            model: candidateList
-
-            delegate: BackgroundItem {
-                id: listBack
-				width: listText.width + Theme.paddingLarge * 2
-                height: parent ? parent.height : 0
-                onClicked: {
-				
-					if ( preedit !== "" ) {
-						commit(model.candidate)
-						candidateList.pushQK(model.candidate)
-						candidateList.loadAW(model.candidate)
-					} else {
-						commit(model.candidate)
-						candidateList.pushAW(model.candidate)
-						candidateList.loadAW(model.candidate)
-					}
-                }
-                
-
-                Text {
-                    id: listText
-                    anchors.centerIn: parent
-                    color: (listBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
-                    font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
-                    text: candidate
-                }
-            }
-            Connections {
-                target: candidateList
-                onCandidatesUpdated: listView.positionViewAtBeginning()
+                )
             }
         }
-		
-		Button {
-			id: button
-			height: 80
-			width: 64
-			text: "…"
-			z: 512
-			
-			onClicked: {
-				if ( inputHandler.keyboardVisible == true ) {
-					inputHandler.keyboardVisible = false;
-					gridView.visible = true;
-				} else {
-					gridView.visible = false;
-					inputHandler.keyboardVisible = true;				
-				}
-			}			
-		}
-		
-		SilicaGridView {
-			id: gridView
-			width: parent.width
-			height: 320
-			model: candidateList
-			z: 512
-			clip: true
-			visible: false
-			
-					
-			delegate: BackgroundItem {
-				id: gridBack
-				width: gridText.width + Theme.paddingLarge * 2
-                height: parent ? parent.height : 0
-				
-				onClicked: {
-				
-					if ( preedit !== "" ) {
-						commit(model.candidate)
-						candidateList.pushQK(model.candidate)
-						candidateList.loadAW(model.candidate)
-						gridView.visible = false
-					} else {
-						commit(model.candidate)
-						candidateList.pushAW(model.candidate)
-						candidateList.loadAW(model.candidate)
-						gridView.visible = false
-					}
-				}	
 
-				Text {
-					id: gridText
-					anchors.centerIn: parent
-					color: (gridBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
-					font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
-					text: candidate
-					z: 768
-				}
-			}
-		}
-		
+        function loadAW(character) {
+
+            var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+
+            db.transaction(
+                function(tx) {
+                    character = '"' + character + '"';
+                    var sql = 'SELECT phrase FROM assoWord WHERE character='+ character + ' ORDER BY frequency DESC LIMIT 0, 128';
+                    var rs = tx.executeSql(sql);
+                    candidateList.clear();
+                    for ( var i = 0; i < rs.rows.length; i++ ) {
+                        candidateList.append( { "candidate": rs.rows.item(i).phrase } );
+                    }
+
+                    candidatesUpdated()
+                }
+            )
+        }
+
+        function pushQK(character) {
+            var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+
+            db.transaction(
+                function(cm) {
+                    character = '"' + character + '"';
+                    var sql = 'UPDATE quickTable SET frequency=frequency+20 WHERE character='+ character;
+                    var rs = cm.executeSql(sql);
+                }
+            )
+        }
+
+        function pushAW(phrase) {
+            var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+
+            db.transaction(
+                function(cm) {
+                    phrase = '"' + phrase + '"';
+                    var sql = 'UPDATE assoWord SET frequency=frequency+20 WHERE phrase='+ phrase;
+                    var rs = cm.executeSql(sql);
+                }
+            )
+        }
     }
-	
-	
+
+    topItem: Column {
+        width: parent.width
+
+        Row {
+            width: parent.width
+            height: 80
+            SilicaListView {
+                id: listView
+                orientation: ListView.Horizontal
+                width: parent.width - 64
+                height: 80
+                clip: true
+                z: 256
+
+                model: candidateList
+
+                delegate: BackgroundItem {
+                    id: listBack
+                    width: listText.width + Theme.paddingLarge * 2
+                    height: parent.height
+                    onClicked: {
+
+                        if ( preedit !== "" ) {
+                            commit(model.candidate)
+                            candidateList.pushQK(model.candidate)
+                            candidateList.loadAW(model.candidate)
+                        } else {
+                            commit(model.candidate)
+                            candidateList.pushAW(model.candidate)
+                            candidateList.loadAW(model.candidate)
+                        }
+                    }
+
+
+                    Text {
+                        id: listText
+                        anchors.centerIn: parent
+                        color: (listBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
+                        font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
+                        text: candidate
+                    }
+                }
+                Connections {
+                    target: candidateList
+                    onCandidatesUpdated: listView.positionViewAtBeginning()
+                }
+            }
+
+            Button {
+                id: button
+                height: 80
+                width: 64
+                text: "…"
+                z: 512
+
+                onClicked: {
+                    if ( inputHandler.keyboardVisible == true ) {
+                        inputHandler.keyboardVisible = false
+                        gridView.visible = true
+                    } else {
+                        gridView.visible = false;
+                        inputHandler.keyboardVisible = true
+                    }
+                }
+            }
+        }
+
+        Flickable {
+            id: gridView
+            width: parent.width
+            height: 240
+            contentWidth: parent.width
+            contentHeight: flow.height
+            anchors.top: listView.bottom
+            interactive: true
+            flickableDirection: Flickable.VerticalFlick
+            clip: true
+            visible: false
+
+            Flow {
+                id: flow
+                width: parent.width
+
+                Repeater {
+                    model: candidateList
+
+                    delegate: BackgroundItem {
+                        id: gridBack
+                        width: gridText.width + Theme.paddingLarge * 2
+                        height: 80
+
+                        onClicked: {
+
+                            if ( preedit !== "" ) {
+                                commit(model.candidate)
+                                candidateList.pushQK(model.candidate)
+                                candidateList.loadAW(model.candidate)
+                                gridView.visible = false
+                                inputHandler.keyboardVisible = true
+                            } else {
+                                commit(model.candidate)
+                                candidateList.pushAW(model.candidate)
+                                candidateList.loadAW(model.candidate)
+                                gridView.visible = false
+                                inputHandler.keyboardVisible = true
+                            }
+                        }
+
+                        Text {
+                            id: gridText
+                            anchors.centerIn: parent
+                            color: (gridBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
+                            font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
+                            text: candidate
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+    }
+
 
     function handleKeyClick() {
         var handled = false
