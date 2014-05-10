@@ -168,8 +168,10 @@ InputHandler {
                     if ( inputHandler.keyboardVisible == true ) {
                         inputHandler.keyboardVisible = false
                         gridView.visible = true
+                        gridView.opacity = 1
                     } else {
-                        gridView.visible = false;
+                        gridView.visible = false
+                        gridView.opacity = 0
                         inputHandler.keyboardVisible = true
                     }
                 }
@@ -187,6 +189,7 @@ InputHandler {
             flickableDirection: Flickable.VerticalFlick
             clip: true
             visible: false
+            opacity: 0
 
             Flow {
                 id: flow
@@ -202,18 +205,19 @@ InputHandler {
 
                         onClicked: {
 
-                            if ( preedit !== "" ) {
+                            gridView.visible = false
+							gridView.opacity = 0
+                            inputHandler.keyboardVisible = true
+
+                            if ( preedit !== "" ) {	
                                 commit(model.candidate)
                                 candidateList.pushQK(model.candidate)
                                 candidateList.loadAW(model.candidate)
-                                gridView.visible = false
-                                inputHandler.keyboardVisible = true
+
                             } else {
                                 commit(model.candidate)
                                 candidateList.pushAW(model.candidate)
                                 candidateList.loadAW(model.candidate)
-                                gridView.visible = false
-                                inputHandler.keyboardVisible = true
                             }
                         }
 
@@ -232,7 +236,6 @@ InputHandler {
         }
 
     }
-
 
     function handleKeyClick() {
         var handled = false
