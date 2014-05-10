@@ -10,7 +10,7 @@ InputHandler {
     property string preedit
     property var trie
     property bool trie_built: false
-	property int keyboardOpacity: 1
+	property bool keyboardVisible: true
 
     ListModel {
         id: candidateList
@@ -100,6 +100,8 @@ InputHandler {
 
             delegate: BackgroundItem {
                 id: listBack
+				width: listText.width + Theme.paddingLarge * 2
+                height: parent ? parent.height : 0
                 onClicked: {
 				
 					if ( preedit !== "" ) {
@@ -112,8 +114,7 @@ InputHandler {
 						candidateList.loadAW(model.candidate)
 					}
                 }
-                width: listText.width + Theme.paddingLarge * 2
-                height: parent ? parent.height : 0
+                
 
                 Text {
                     id: listText
@@ -137,60 +138,58 @@ InputHandler {
 			z: 512
 			
 			onClicked: {
-				if ( inputHandler.keyboardOpacity == 0 ) {
-					gridView.visible = false;
-					gridView.opacity = 0;
-					inputHandler.keyboardOpacity = 1;
-					
+				if ( inputHandler.keyboardVisible == true ) {
+					inputHandler.keyboardVisible = false;
+					gridView.visible = true;
 				} else {
-					inputHandler.keyboardOpacity = 0;
-					gridView.visible = true;					
-					gridView.opacity = 1;
+					gridView.visible = false;
+					inputHandler.keyboardVisible = true;				
 				}
 			}			
 		}
-    }
-
-	SilicaGridView {
-		id: gridView
-		width: parent.width
-		height: 400
-		anchors.top: listView.bottom
-		model: candidateList
-		opacity: 0
-		visible: 0
-		z: 1024
-		clip: true
-	
+		
+		SilicaGridView {
+			id: gridView
+			width: parent.width
+			height: 320
+			model: candidateList
+			z: 512
+			clip: true
+			visible: false
 			
-		delegate: BackgroundItem {
-			id: gridBack
-		
-			onClicked: {
-		
-				if ( preedit !== "" ) {
-					commit(model.candidate)
-					candidateList.pushQK(model.candidate)
-					candidateList.loadAW(model.candidate)
-					gridView.visible = false
-				} else {
-					commit(model.candidate)
-					candidateList.pushAW(model.candidate)
-					candidateList.loadAW(model.candidate)
-					gridView.visible = false
-				}
-			}	
+					
+			delegate: BackgroundItem {
+				id: gridBack
+				width: gridText.width + Theme.paddingLarge * 2
+                height: parent ? parent.height : 0
+				
+				onClicked: {
+				
+					if ( preedit !== "" ) {
+						commit(model.candidate)
+						candidateList.pushQK(model.candidate)
+						candidateList.loadAW(model.candidate)
+						gridView.visible = false
+					} else {
+						commit(model.candidate)
+						candidateList.pushAW(model.candidate)
+						candidateList.loadAW(model.candidate)
+						gridView.visible = false
+					}
+				}	
 
-			Text {
-				id: gridText
-				anchors.centerIn: parent
-				color: (gridBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
-				font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
-				text: candidate
-				z: 2048
+				Text {
+					id: gridText
+					anchors.centerIn: parent
+					color: (gridBack.down || index === 0) ? Theme.highlightColor : Theme.primaryColor
+					font { pixelSize: Theme.fontSizeSmall; family: Theme.fontFamily }
+					text: candidate
+					z: 768
+				}
 			}
 		}
-	}
+		
+    }
 	
 	
 
