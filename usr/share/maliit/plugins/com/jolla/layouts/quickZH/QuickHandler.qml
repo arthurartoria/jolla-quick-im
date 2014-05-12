@@ -266,8 +266,12 @@ InputHandler {
 
             handled = true
         } else if (pressedKey.text.length !== 0 && pressedKey.text !== "，" && pressedKey.text !== "。") {
-            preedit = preedit + pressedKey.text
 
+            if ( preedit.length <= 1 ) {
+                preedit = preedit + pressedKey.text
+            } else {
+                preedit = ""
+            }
 
             if (keyboard.shiftState !== ShiftState.LockedShift) {
                 keyboard.shiftState = ShiftState.NoShift
