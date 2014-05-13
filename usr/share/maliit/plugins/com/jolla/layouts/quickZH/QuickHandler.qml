@@ -206,10 +206,10 @@ InputHandler {
                         onClicked: {
 
                             gridView.visible = false
-							gridView.opacity = 0
+                            gridView.opacity = 0
                             inputHandler.keyboardVisible = true
 
-                            if ( preedit !== "" ) {	
+                            if ( preedit !== "" ) {
                                 commit(model.candidate)
                                 candidateList.pushQK(model.candidate)
                                 candidateList.loadAW(model.candidate)
@@ -256,21 +256,26 @@ InputHandler {
                 commit(preedit)
                 handled = true
             }
-        } else if (pressedKey.key === Qt.Key_Backspace && preedit !== "") {
-            preedit = preedit.slice(0, preedit.length-1)
-            MInputMethodQuick.sendPreedit(preedit)
+        } else if ( pressedKey.key === Qt.Key_Backspace ) {
+
+            if ( preedit !== "" ) {
+                preedit = preedit.slice(0, preedit.length-1)
+                MInputMethodQuick.sendPreedit(preedit)
+            } else {
+                MInputMethodQuick.sendKey(Qt.Key_Backspace)
+            }
 
             if (keyboard.shiftState !== ShiftState.LockedShift) {
                 keyboard.shiftState = ShiftState.NoShift
             }
 
             handled = true
-        } else if (pressedKey.text.length !== 0 && pressedKey.text !== "，" && pressedKey.text !== "。") {
+        } else if ( pressedKey.text.length > 0 && pressedKey.text.match(/[日月金木水火土竹戈十大中一弓人心手口尸廿山女田卜難重]/) !== null ) {
 
             if ( preedit.length <= 1 ) {
                 preedit = preedit + pressedKey.text
             } else {
-                preedit = ""
+                reset()
             }
 
             if (keyboard.shiftState !== ShiftState.LockedShift) {
@@ -283,6 +288,8 @@ InputHandler {
             handled = true
         } else {
             commit(pressedKey.text)
+            handled = true
+
         }
 
         return handled
