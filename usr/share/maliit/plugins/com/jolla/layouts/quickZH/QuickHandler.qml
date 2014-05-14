@@ -115,7 +115,6 @@ InputHandler {
         Row {
             width: parent.width
             height: 80
-            
             SilicaListView {
                 id: listView
                 orientation: ListView.Horizontal
@@ -152,6 +151,7 @@ InputHandler {
                         text: candidate
                     }
                 }
+
                 Connections {
                     target: candidateList
                     onCandidatesUpdated: listView.positionViewAtBeginning()
@@ -167,14 +167,14 @@ InputHandler {
 
                 onClicked: {
                     if ( inputHandler.keyboardVisible == true ) {
-                        listView.visible = false
+                        listView.opacity = 0
                         inputHandler.keyboardVisible = false
                         gridView.visible = true
                         gridView.opacity = 1
                     } else {
                         gridView.visible = false
                         gridView.opacity = 0
-                        listView.visible = true
+                        listView.opacity = 1
                         inputHandler.keyboardVisible = true
                     }
                 }
@@ -210,6 +210,7 @@ InputHandler {
 
                             gridView.visible = false
                             gridView.opacity = 0
+                            listView.opacity = 1
                             inputHandler.keyboardVisible = true
 
                             if ( preedit !== "" ) {
