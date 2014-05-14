@@ -115,6 +115,7 @@ InputHandler {
         Row {
             width: parent.width
             height: 80
+            
             SilicaListView {
                 id: listView
                 orientation: ListView.Horizontal
@@ -166,12 +167,14 @@ InputHandler {
 
                 onClicked: {
                     if ( inputHandler.keyboardVisible == true ) {
+                        listView.visible = false
                         inputHandler.keyboardVisible = false
                         gridView.visible = true
                         gridView.opacity = 1
                     } else {
                         gridView.visible = false
                         gridView.opacity = 0
+                        listView.visible = true
                         inputHandler.keyboardVisible = true
                     }
                 }
