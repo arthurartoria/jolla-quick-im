@@ -128,13 +128,18 @@ InputHandler {
 						    MInputMethodQuick.sendCommit(Clipboard.text)
 						    keyboard.expandedPaste = false
 						}
+						onPressAndHold: {
+									Clipboard.text = ""			
+									keyboard.expandedPaste = false
+						}
+						
 					}
 				}
                 width: parent.width - 64
                 height: 80
                 clip: true
                 z: 256
-
+				boundsBehavior: !keyboard.expandedPaste && Clipboard.hasText ? Flickable.DragOverBounds : Flickable.StopAtBounds
                 model: candidateList
 
                 delegate: BackgroundItem {
@@ -167,6 +172,22 @@ InputHandler {
                 Connections {
                     target: candidateList
                     onCandidatesUpdated: listView.positionViewAtBeginning()
+                }
+
+				Connections {
+                    target: Clipboard
+                    onTextChanged: {
+                        if (Clipboard.hasText) {
+                            // need to have updated width before repositioning view
+                            positionerTimer.restart()
+                        }
+                    }
+                }
+
+				Timer {
+                    id: positionerTimer
+                    interval: 10
+                    onTriggered: listView.positionViewAtBeginning()
                 }
             }
 
@@ -329,3 +350,4 @@ InputHandler {
     }
 
 }
+
