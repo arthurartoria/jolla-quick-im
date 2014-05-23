@@ -118,6 +118,18 @@ InputHandler {
             SilicaListView {
                 id: listView
                 orientation: ListView.Horizontal
+				header: Component {
+					id: pasteComponent
+					PasteButton {
+						onClicked: {
+						    if (preedit.length > 0) {
+						        commit(preedit)
+						    }
+						    MInputMethodQuick.sendCommit(Clipboard.text)
+						    keyboard.expandedPaste = false
+						}
+					}
+				}
                 width: parent.width - 64
                 height: 80
                 clip: true
