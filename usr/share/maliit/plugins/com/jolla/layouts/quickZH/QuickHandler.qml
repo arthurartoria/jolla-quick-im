@@ -31,7 +31,7 @@ InputHandler {
                     function(tx) {
 
                         quick = '"'+ quick +'%"';
-                        var sql = 'SELECT character FROM quickTable WHERE quick LIKE '+ quick + ' ORDER BY frequency DESC LIMIT 0, 256';
+                        var sql = 'SELECT character FROM quickTable WHERE quick LIKE '+ quick + ' ORDER BY frequency DESC LIMIT 0, 128';
                         var rs = tx.executeSql(sql);
                         candidateList.clear();
                         for ( var i = 0; i < rs.rows.length; i++ ) {
@@ -90,7 +90,7 @@ InputHandler {
             db.transaction(
                 function(cm) {
                     character = '"' + character + '"';
-                    var sql = 'UPDATE quickTable SET frequency=frequency+20 WHERE character='+ character;
+                    var sql = 'UPDATE quickTable SET frequency=frequency+80 WHERE character='+ character;
                     var rs = cm.executeSql(sql);
                 }
             )
@@ -102,10 +102,24 @@ InputHandler {
             db.transaction(
                 function(cm) {
                     phrase = '"' + phrase + '"';
-                    var sql = 'UPDATE assoWord SET frequency=frequency+20 WHERE phrase='+ phrase;
+                    var sql = 'UPDATE assoWord SET frequency=frequency+80 WHERE phrase='+ phrase;
                     var rs = cm.executeSql(sql);
                 }
             )
+        }
+    }
+
+    ListModel {
+        id: qkStack
+        ListElement {
+            candidate: ""
+        }
+    }
+
+    ListModel {
+        id: awStack
+        ListElement {
+            candidate: ""
         }
     }
 
@@ -135,6 +149,30 @@ InputHandler {
 						
 					}
 				}
+
+                Timer {
+                    id: pushTimer
+                    interval: 64000
+                    running: true
+                    onTriggered: {
+                        if ( awStack.count > 0 ) {
+                            for ( var i = 0; i < awStack.count; i++ ) {
+                                candidateList.pushAW(awStack.get(i).candidate)
+                            }
+
+                            awStack.clear()
+                        }
+
+                        if ( qkStack.count > 0 ) {
+                            for ( var i = 0; i < qkStack.count; i++ ) {
+                                candidateList.pushQK(qkStack.get(i).candidate)
+                            }
+
+                            qkStack.clear()
+                        }
+                    }
+                }
+
                 width: parent.width - 64
                 height: 80
                 clip: true
@@ -150,11 +188,11 @@ InputHandler {
 
                         if ( preedit !== "" ) {
                             commit(model.candidate)
-                            candidateList.pushQK(model.candidate)
+                            qkStack.append("candidate", model.candidate)
                             candidateList.loadAW(model.candidate)
                         } else {
                             commit(model.candidate)
-                            candidateList.pushAW(model.candidate)
+                            awStack.append("candidate", model.candidate)
                             candidateList.loadAW(model.candidate)
                         }
                     }
