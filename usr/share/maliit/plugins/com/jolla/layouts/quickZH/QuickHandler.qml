@@ -132,28 +132,29 @@ InputHandler {
             SilicaListView {
                 id: listView
                 orientation: ListView.Horizontal
-				header: Component {
-					id: pasteComponent
-					PasteButton {
-						onClicked: {
-						    if (preedit.length > 0) {
-						        commit(preedit)
-						    }
-						    MInputMethodQuick.sendCommit(Clipboard.text)
-						    keyboard.expandedPaste = false
-						}
-						onPressAndHold: {
-									Clipboard.text = ""			
-									keyboard.expandedPaste = false
-						}
-						
-					}
-				}
+                header: Component {
+                    id: pasteComponent
+                    PasteButton {
+                        onClicked: {
+                            if (preedit.length > 0) {
+                                commit(preedit)
+                            }
+                            MInputMethodQuick.sendCommit(Clipboard.text)
+                            keyboard.expandedPaste = false
+                        }
+                        onPressAndHold: {
+                                    Clipboard.text = ""
+                                    keyboard.expandedPaste = false
+                        }
+
+                    }
+                }
 
                 Timer {
                     id: pushTimer
                     interval: 64000
                     running: true
+                    repeat: true
                     onTriggered: {
                         if ( awStack.count > 0 ) {
                             for ( var i = 0; i < awStack.count; i++ ) {
@@ -177,7 +178,7 @@ InputHandler {
                 height: 80
                 clip: true
                 z: 256
-				boundsBehavior: !keyboard.expandedPaste && Clipboard.hasText ? Flickable.DragOverBounds : Flickable.StopAtBounds
+                boundsBehavior: !keyboard.expandedPaste && Clipboard.hasText ? Flickable.DragOverBounds : Flickable.StopAtBounds
                 model: candidateList
 
                 delegate: BackgroundItem {
@@ -212,7 +213,7 @@ InputHandler {
                     onCandidatesUpdated: listView.positionViewAtBeginning()
                 }
 
-				Connections {
+                Connections {
                     target: Clipboard
                     onTextChanged: {
                         if (Clipboard.hasText) {
@@ -222,7 +223,7 @@ InputHandler {
                     }
                 }
 
-				Timer {
+                Timer {
                     id: positionerTimer
                     interval: 10
                     onTriggered: listView.positionViewAtBeginning()
