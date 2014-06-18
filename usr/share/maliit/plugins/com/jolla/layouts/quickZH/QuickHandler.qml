@@ -23,45 +23,45 @@ InputHandler {
 
         function loadQK(quick) {
 
-            var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
+            if ( quick.length > 0 ) {
 
-            if ( quick.length > 1 ) {
+                var db = LocalStorage.openDatabaseSync("quickZH", "1.0", "", 100000);
 
-                db.transaction(
-                    function(tx) {
+                if ( quick.length ==1 ) {
 
-                        quick = '"'+ quick +'%"';
-                        var sql = 'SELECT character FROM quickTable WHERE quick LIKE '+ quick + ' ORDER BY frequency DESC LIMIT 0, 128';
-                        var rs = tx.executeSql(sql);
-                        candidateList.clear();
-                        for ( var i = 0; i < rs.rows.length; i++ ) {
-                            candidateList.append( { "candidate": rs.rows.item(i).character } );
-                    }
+                    db.transaction(
+                        function(tx) {
 
-                    candidatesUpdated()
+                            var sql = 'SELECT character FROM quickTable WHERE ( quick >= "'+ quick +'" AND quick < "' + quick + 'Ｚ")' + ' ORDER BY  frequency DESC LIMIT 0, 32'
+                            var rs = tx.executeSql(sql)
+                            candidateList.clear()
+                            for ( var i = 0; i < rs.rows.length; i++ ) {
+                                candidateList.append( { "candidate": rs.rows.item(i).character } )
+                        }
 
-                    }
+                        candidatesUpdated()
 
-                )
+                        }
+                    )
 
-            } else {
+                } else {
 
-                db.transaction(
-                    function(tx) {
+                    db.transaction(
+                        function(tx) {
 
-                        quick = '"'+ quick +'"';
-                        var sql = 'SELECT character FROM quickTable WHERE quick = '+ quick;
-                        var rs = tx.executeSql(sql);
-                        candidateList.clear();
-                        for ( var i = 0; i < rs.rows.length; i++ ) {
-                            candidateList.append( { "candidate": rs.rows.item(i).character } );
-                    }
+                            var sql = 'SELECT character FROM quickTable WHERE quick = "'+ quick + '"'
+                            var rs = tx.executeSql(sql)
+                            candidateList.clear();
+                            for ( var i = 0; i < rs.rows.length; i++ ) {
+                                candidateList.append( { "candidate": rs.rows.item(i).character } )
+                        }
 
-                    candidatesUpdated()
+                        candidatesUpdated()
 
-                    }
+                        }
 
-                )
+                    )
+                }
             }
         }
 
@@ -90,7 +90,7 @@ InputHandler {
             db.transaction(
                 function(cm) {
                     character = '"' + character + '"';
-                    var sql = 'UPDATE quickTable SET frequency=frequency+80 WHERE character='+ character;
+                    var sql = 'UPDATE quickTable SET frequency=frequency+20 WHERE character='+ character;
                     var rs = cm.executeSql(sql);
                 }
             )
@@ -102,24 +102,10 @@ InputHandler {
             db.transaction(
                 function(cm) {
                     phrase = '"' + phrase + '"';
-                    var sql = 'UPDATE assoWord SET frequency=frequency+80 WHERE phrase='+ phrase;
+                    var sql = 'UPDATE assoWord SET frequency=frequency+20 WHERE phrase='+ phrase;
                     var rs = cm.executeSql(sql);
                 }
             )
-        }
-    }
-
-    ListModel {
-        id: qkStack
-        ListElement {
-            candidate: ""
-        }
-    }
-
-    ListModel {
-        id: awStack
-        ListElement {
-            candidate: ""
         }
     }
 
@@ -149,31 +135,6 @@ InputHandler {
 
                     }
                 }
-
-                Timer {
-                    id: pushTimer
-                    interval: 64000
-                    running: true
-                    repeat: true
-                    onTriggered: {
-                        if ( awStack.count > 0 ) {
-                            for ( var i = 0; i < awStack.count; i++ ) {
-                                candidateList.pushAW(awStack.get(i).candidate)
-                            }
-
-                            awStack.clear()
-                        }
-
-                        if ( qkStack.count > 0 ) {
-                            for ( var i = 0; i < qkStack.count; i++ ) {
-                                candidateList.pushQK(qkStack.get(i).candidate)
-                            }
-
-                            qkStack.clear()
-                        }
-                    }
-                }
-
                 width: parent.width - 64
                 height: 80
                 clip: true
@@ -189,11 +150,11 @@ InputHandler {
 
                         if ( preedit !== "" ) {
                             commit(model.candidate)
-                            qkStack.append("candidate", model.candidate)
+                            candidateList.pushQK(model.candidate)
                             candidateList.loadAW(model.candidate)
                         } else {
                             commit(model.candidate)
-                            awStack.append("candidate", model.candidate)
+                            candidateList.pushAW(model.candidate)
                             candidateList.loadAW(model.candidate)
                         }
                     }
@@ -389,4 +350,3 @@ InputHandler {
     }
 
 }
-
